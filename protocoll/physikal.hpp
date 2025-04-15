@@ -6,27 +6,26 @@
 #include <string.h>
 using namespace std;
 
-struct PhysikalConnection
-{
-    uint8_t inpPin;
-    uint8_t outPin;
+struct PhysikalConnection {
+  uint8_t inpPin;
+  uint8_t outPin;
 };
 
-struct PhysikalPocket
-{
+struct PhysikalPocket {
 };
 
-struct PhysikalNode
-{
-    Node logicalNode;
+struct PhysikalNode {
+  vector<PhysikalConnection> pins;
+  Node logicalNode;
 
-    void send(Address to, uint8_t *data)
-    {
-    }
+  void init() {
+    
+  }
 
-    void loop()
-    {
-    }
+  void send(Address to, uint8_t *data) {
+  }
 
-    vector<PhysikalConnection> pins;
+  void loop() {
+  }
+
 };

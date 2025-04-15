@@ -1,12 +1,19 @@
 #include "./protocoll/index.hpp"
 #include <Arduino.h>
 
-void setup()
-{
+void setup() {
   Serial.begin(9600);
-  while (!Serial)
-  {
+  while (!Serial) {
   }
+
+  PhysikalNode node;
+
+  node.pins.push_back(PhysikalConnection{
+    .inpPin = 0,
+    .outPin = 27,
+  });
+
+  node.init();
 
   Serial.println();
   Serial.println();
