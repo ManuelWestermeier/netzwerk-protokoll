@@ -8,8 +8,8 @@ using namespace std;
 
 struct PhysikalConnection
 {
-    uint8_t inpPin;
-    uint8_t outPin;
+  uint8_t inpPin;
+  uint8_t outPin;
 };
 
 struct PhysikalPocket
@@ -18,18 +18,19 @@ struct PhysikalPocket
 
 struct PhysikalNode
 {
-    vector<PhysikalConnection> pins;
-    Node logicalNode;
+  Node logicalNode;
 
-    void init()
-    {
-    }
+  void init()
+  {
+  }
 
-    void send(Address to, uint8_t *data)
-    {
-    }
+  void send(Address to, uint8_t *data)
+  {
+  }
 
-    void loop()
-    {
-    }
+  void loop()
+  {
+  }
+
+  vector<PhysikalConnection> pins;
 };

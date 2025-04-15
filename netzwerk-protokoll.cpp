@@ -8,15 +8,6 @@ void setup()
   {
   }
 
-  PhysikalNode node;
-
-  node.pins.push_back(PhysikalConnection{
-      .inpPin = 0,
-      .outPin = 27,
-  });
-
-  node.init();
-
   Serial.println();
   Serial.println();
   Serial.println();
