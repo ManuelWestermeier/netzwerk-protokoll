@@ -18,6 +18,7 @@ struct PhysikalPocket
 
 struct PhysikalNode
 {
+  vector<PhysikalConnection> pins;
   Node logicalNode;
 
   void init()
@@ -31,6 +32,4 @@ struct PhysikalNode
   void loop()
   {
   }
-
-  vector<PhysikalConnection> pins;
 };

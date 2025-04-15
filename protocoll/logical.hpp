@@ -6,20 +6,24 @@
 #include <string.h>
 using namespace std;
 
-struct Address : public vector<uint16_t> {
+struct Address : public vector<uint16_t>
+{
 };
 
-struct Match {
+struct Match
+{
   int positive;
   int negative;
 };
 
-Match match(const Address &a1, const Address &a2) {
+Match match(const Address &a1, const Address &a2)
+{
   size_t maxLen = max(a1.size(), a2.size());
   size_t minLen = min(a1.size(), a2.size());
-  Match m = { 0, 0 };
+  Match m = {0, 0};
 
-  while (m.positive < minLen && a1[m.positive] == a2[m.positive]) {
+  while (m.positive < minLen && a1[m.positive] == a2[m.positive])
+  {
     m.positive++;
   }
 
@@ -27,11 +31,13 @@ Match match(const Address &a1, const Address &a2) {
   return m;
 }
 
-bool eq(const Address &a1, const Address &a2) {
+bool eq(const Address &a1, const Address &a2)
+{
   if (a1.size() != a2.size())
     return false;
 
-  for (int i = 0; i < a1.size(); i++) {
+  for (int i = 0; i < a1.size(); i++)
+  {
     if (a1.at(i) != a2.at(i))
       return false;
   }
@@ -39,24 +45,29 @@ bool eq(const Address &a1, const Address &a2) {
   return true;
 }
 
-struct Connection {
+struct Connection
+{
   Address address;
   uint8_t pin;
 };
 
-struct Pocket {
+struct Pocket
+{
   Address address;
   char data[11] = "HELLOWORLD";
   uint16_t checksum;
 
-  void computeCheckSum() {
+  void computeCheckSum()
+  {
     checksum = 0;
-    for (uint8_t i = 0; i < sizeof(data); i++) {
+    for (uint8_t i = 0; i < sizeof(data); i++)
+    {
       checksum ^= data[i];
     }
   }
 
-  Pocket(Address a, const char *d) {
+  Pocket(Address a, const char *d)
+  {
     address = a;
     strncpy(data, d, 10);
     data[sizeof(data) - 1] = '\0';
@@ -64,24 +75,30 @@ struct Pocket {
   }
 };
 
-struct Node {
+struct Node
+{
   vector<Connection> connections;
   Address you;
 
-  void send(Pocket p) {
-    if (connections.empty()) {
+  void send(Pocket p)
+  {
+    if (connections.empty())
+    {
       Serial.println("No available connections to send data.");
       return;
     }
 
-    Match bestMatch = { 0, 0 };
+    Match bestMatch = {0, 0};
     vector<Connection> sendConnections;
     Connection sendConnection = connections.at(0);
 
-    for (const auto &connection : connections) {
+    for (const auto &connection : connections)
+    {
       Match currentMatch = match(connection.address, p.address);
-      if (bestMatch.positive <= currentMatch.positive) {
-        if (bestMatch.positive < currentMatch.positive) {
+      if (bestMatch.positive <= currentMatch.positive)
+      {
+        if (bestMatch.positive < currentMatch.positive)
+        {
           sendConnections.clear();
         }
         bestMatch = currentMatch;
@@ -90,9 +107,11 @@ struct Node {
     }
 
     bestMatch = match(sendConnection.address, p.address);
-    for (const auto &goodConnection : sendConnections) {
+    for (const auto &goodConnection : sendConnections)
+    {
       Match currentMatch = match(goodConnection.address, p.address);
-      if (currentMatch.negative <= bestMatch.negative) {
+      if (currentMatch.negative <= bestMatch.negative)
+      {
         sendConnection = goodConnection;
         bestMatch = currentMatch;
       }
@@ -102,11 +121,15 @@ struct Node {
     Serial.println(sendConnection.pin);
   }
 
-  void recieve(Pocket p) {
-    if (eq(you, p.address)) {
+  void recieve(Pocket p)
+  {
+    if (eq(you, p.address))
+    {
       Serial.print("Data Recieved: ");
       Serial.println(String(p.data));
-    } else {
+    }
+    else
+    {
       send(p);
     }
   }
