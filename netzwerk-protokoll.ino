@@ -107,11 +107,29 @@ struct Node {
   }
 };
 
+struct PhysikalConnection {
+  uint8_t inpPin;
+  uint8_t outPin;
+};
+
+struct PhysikalPocket {
+};
+
+struct PhysikalNode {
+  Node logicalNode;
+
+  void send(Address to, uint8_t *data) {
+  }
+
+  void loop() {
+  }
+
+  vector<PhysikalConnection> pins;
+};
+
 void setup() {
   Serial.begin(9600);
   while (!Serial) {}
-
-  Node node;
 
   Serial.println();
   Serial.println();
