@@ -24,6 +24,16 @@ Match match(const Address &a1, const Address &a2) {
   return m;
 }
 
+bool eq(const Address &a1, const Address &a2) {
+  if (a1.size() != a2.size()) return false;
+
+  for (int i = 0; i < a1.size(); i++) {
+    if (a1.at(i) != a2.at(i)) return false;
+  }
+
+  return true;
+}
+
 struct Connection {
   Address address;
   uint8_t pin;
@@ -54,28 +64,32 @@ struct Node {
   Address you;
 
   void send(Pocket p) {
-    Match m = { 0, 0 };
-    vector<Connection> sendConnections = connections.at(0);
+    if (connections.empty()) {
+      Serial.println("No available connections to send data.");
+      return;
+    }
+
+    Match bestMatch = { 0, 0 };
+    vector<Connection> sendConnections;
     Connection sendConnection = connections.at(0);
 
     for (const auto &connection : connections) {
       Match currentMatch = match(connection.address, p.address);
-      if (m.positive <= currentMatch.positive) {
-        if (m.positive < currentMatch.positive) {
+      if (bestMatch.positive <= currentMatch.positive) {
+        if (bestMatch.positive < currentMatch.positive) {
           sendConnections.clear();
         }
-        m = currentMatch;
+        bestMatch = currentMatch;
         sendConnections.push_back(connection);
       }
     }
 
-    m = match(sendConnection.at(0).address, p.address);
-
+    bestMatch = match(sendConnection.address, p.address);
     for (const auto &goodConnection : sendConnections) {
-      Match currentMatch = match(connection.address, p.address);
-      if (currentMatch.negative <= m.negative) {
+      Match currentMatch = match(goodConnection.address, p.address);
+      if (currentMatch.negative <= bestMatch.negative) {
         sendConnection = goodConnection;
-        m = currentMatch;
+        bestMatch = currentMatch;
       }
     }
 
@@ -84,11 +98,12 @@ struct Node {
   }
 
   void recieve(Pocket p) {
-    if (match(you, p.address).negative == 0) {
-      Serial.println("Data Recieved: " + String(p.data));
-      return;
+    if (eq(you, p.address)) {
+      Serial.print("Data Recieved: ");
+      Serial.println(String(p.data));
+    } else {
+      send(p);
     }
-    send(p);
   }
 };
 
@@ -96,21 +111,12 @@ void setup() {
   Serial.begin(9600);
   while (!Serial) {}
 
-  // Create a Node and set its own address.
   Node node;
-  node.you.push_back(1);
-  node.you.push_back(2);
-  node.you.push_back(3);
 
-  // Create a Pocket with the same address to trigger the "data received" branch.
-  Address pocketAddress;
-  pocketAddress.push_back(1);
-  pocketAddress.push_back(2);
-  pocketAddress.push_back(3);
-  Pocket p(pocketAddress, "HELLOWORLD");
-
-  // Call recieve on node with the created Pocket.
-  node.recieve(p);
+  Serial.println();
+  Serial.println();
+  Serial.println();
+  Serial.println();
 }
 
 void loop() {}
